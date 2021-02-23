@@ -38,6 +38,15 @@ class LamportSignature:
     @property
     def publicKey(self):
         return [self.zeroPublicKey, self.onePublicKey]
+    
+    @staticmethod
+    def concatenateListToString(valueList):
+        if type(valueList) is list:
+            result = ''
+            for value in valueList:
+                result += MerkleTree.concatenateListToString(value)
+                return result
+        else: return valueList
 
     @staticmethod
     def randomKey(n=32):
