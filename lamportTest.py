@@ -5,7 +5,7 @@ lamportKeys = lamport.LamportSignature()
 messageSignature = lamportKeys.sign(senderMessage)
 
 ###########################################################################################################
-
+print('-------------------------------------------------------------------------')
 recievedSignature = messageSignature
 recievedMessage = senderMessage
 
