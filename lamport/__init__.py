@@ -44,7 +44,7 @@ class LamportSignature:
         if type(valueList) is list:
             result = ''
             for value in valueList:
-                result += MerkleTree.concatenateListToString(value)
+                result += LamportSignature.concatenateListToString(value)
                 return result
         else: return valueList
 
