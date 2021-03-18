@@ -1,8 +1,8 @@
-import lamport
+import winternitz
 
 senderMessage = 'testing123'
-lamportKeys = lamport.LamportSignature()
-messageSignature = lamportKeys.sign(senderMessage)
+winternitzKeys = winternitz.WinternitzSignature()
+messageSignature = winternitzKeys.sign(senderMessage)
 
 ###########################################################################################################
 print('-------------------------------------------------------------------------')
@@ -10,10 +10,10 @@ recievedSignature = messageSignature
 recievedMessage = senderMessage
 
 print('Signature verification for "testin1": ',
-      lamportKeys.verify('testin1', recievedSignature))
+      winternitzKeys.verify('testin1', recievedSignature))
 print('Signature verification for "testIng": ',
-      lamportKeys.verify('testIng', recievedSignature))
+      winternitzKeys.verify('testIng', recievedSignature))
 print('Signature verification for "testing": ',
-      lamportKeys.verify('testing', recievedSignature))
+      winternitzKeys.verify('testing', recievedSignature))
 print('Signature verification for "testing123": ',
-      lamportKeys.verify(recievedMessage, recievedSignature))
+      winternitzKeys.verify(recievedMessage, recievedSignature))
