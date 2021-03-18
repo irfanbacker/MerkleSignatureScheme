@@ -24,40 +24,38 @@ recievedRootPublicKey = treeRootPublicKey
 recievedMessage = senderMessage
 recievedMerkleSignature = merkleSignature
 
-#Example 1 - wrong message
+# Example 1 - wrong message
 print('Verifying message "testing" with message signature')
 result = keyPairs[currentOTSkeyIndex].verify('testing', messageSignature)
 print("Message verification result: " + str(result))
 
-#Example 2 - wrong publickey
+# Example 2 - wrong publickey
 print('\nVerifying message "' + recievedMessage + '" with message signature')
-result = keyPairs[currentOTSkeyIndex].verify(recievedMessage, recievedMerkleSignature[0])
+result = keyPairs[currentOTSkeyIndex].verify(
+    recievedMessage, recievedMerkleSignature[0])
 print("Message verification result: " + str(result))
 if result:
     recieverMerkleTree = merkle.MerkleTree(leavesCount=totalCountofOTSkeys)
-    recieverMerkleTree.addNode((0, currentOTSkeyIndex), recievedMerkleSignature[0], isHashed=False)
+    recieverMerkleTree.addNode(
+        (0, currentOTSkeyIndex), recievedMerkleSignature[0], isHashed=False)
     recieverMerkleTree.buildTree()
 
     for i, (level, index) in enumerate(recieverMerkleTree.getAuthNodesPosition(currentOTSkeyIndex)):
-        recieverMerkleTree.addNode((level, index), recievedMerkleSignature[2][i])
+        recieverMerkleTree.addNode(
+            (level, index), recievedMerkleSignature[2][i])
     recieverMerkleTree.buildTree()
 
     result = recieverMerkleTree.RootPublicKey() == recievedRootPublicKey
     print("Merkle signature verification: " + str(result))
     print('Invalid public key used!')
 
-#Example 3 - Correct signatures
+# Example 3 - Correct signatures
 print('\nVerifying message "' + recievedMessage + '" with message signature')
-result = keyPairs[currentOTSkeyIndex].verify(recievedMessage, recievedMerkleSignature[0])
+result = keyPairs[currentOTSkeyIndex].verify(
+    recievedMessage, recievedMerkleSignature[0])
 print("Message verification result: " + str(result))
 if result:
     recieverMerkleTree = merkle.MerkleTree(leavesCount=totalCountofOTSkeys)
-    recieverMerkleTree.addNode((0, currentOTSkeyIndex), recievedMerkleSignature[1], isHashed=False)
-    recieverMerkleTree.buildTree()
-
-    for i, (level, index) in enumerate(recieverMerkleTree.getAuthNodesPosition(currentOTSkeyIndex)):
-        recieverMerkleTree.addNode((level, index), recievedMerkleSignature[2][i])
-    recieverMerkleTree.buildTree()
-
-    result = recieverMerkleTree.RootPublicKey() == recievedRootPublicKey
+    result = recieverMerkleTree.verify(currentOTSkeyIndex=currentOTSkeyIndex,
+                                       recievedMerkleSignature=recievedMerkleSignature, recievedRootPublicKey=recievedRootPublicKey)
     print("Merkle signature verification: " + str(result))
