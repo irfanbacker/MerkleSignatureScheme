@@ -1,10 +1,16 @@
 import hashlib
+import bitstring
 from binascii import hexlify, unhexlify
 from os import urandom
 
 
 class WinternitzOTS:
-    def __init__(self):
+    def __init__(self, w=8):
+        if w > 8:
+            w = 8
+        self.w = w
+        self.n = 256//self.w
+        self.readUnit = 'uint:{}'.format(self.w)
         self.generateKeys()
         self.used = False
 
@@ -12,10 +18,10 @@ class WinternitzOTS:
         privKey = []
         pubKey = []
 
-        for i in range(32):
+        for i in range(self.n):
             h = WinternitzOTS.randomKey()
             privKey.append(h)
-            for j in range(256):
+            for j in range(2**self.w):
                 h = self.sha256(h)
             pubKey.append(h)
 
@@ -28,21 +34,26 @@ class WinternitzOTS:
         else:
             self.used = True
         hashedMsg = WinternitzOTS.sha256Bytes(msg)
+        hashedBitString = bitstring.ConstBitStream(hashedMsg)
         signature = []
+
         print('Signing message for "'+msg+'"')
-        for i in range(len(hashedMsg)):
+        for i in range(self.n):
             key = self.privateKey[i]
-            for j in range(256-hashedMsg[i]):
+            intVal = hashedBitString.read(self.readUnit)
+            for j in range(2**self.w-intVal):
                 key = self.sha256(key)
             signature.append(key)
         return signature
 
     def verify(self, msg, signature):
         hashedMsg = WinternitzOTS.sha256Bytes(msg)
+        hashedBitString = bitstring.ConstBitStream(hashedMsg)
         msgPubKey = []
-        for i in range(len(hashedMsg)):
+        for i in range(self.n):
             key = signature[i]
-            for j in range(hashedMsg[i]):
+            intVal = hashedBitString.read(self.readUnit)
+            for j in range(intVal):
                 key = self.sha256(key)
             msgPubKey.append(key)
         if msgPubKey == self.publicKey:
