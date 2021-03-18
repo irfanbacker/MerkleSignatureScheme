@@ -2,7 +2,7 @@ import lamport
 import merkle
 
 totalCountofOTSkeys = 4
-keyPairs = [lamport.LamportSignature() for i in range(totalCountofOTSkeys)]
+keyPairs = [lamport.LamportOTS() for i in range(totalCountofOTSkeys)]
 
 senderMerkleTree = merkle.MSS(leavesCount=totalCountofOTSkeys)
 for i in range(totalCountofOTSkeys):

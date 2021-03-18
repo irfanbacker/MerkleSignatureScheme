@@ -1,7 +1,7 @@
 import winternitz
 
 senderMessage = 'testing123'
-winternitzKeys = winternitz.WinternitzSignature()
+winternitzKeys = winternitz.WinternitzOTS()
 messageSignature = winternitzKeys.sign(senderMessage)
 
 ###########################################################################################################

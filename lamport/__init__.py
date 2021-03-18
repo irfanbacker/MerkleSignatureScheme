@@ -2,21 +2,25 @@ import hashlib
 from binascii import hexlify, unhexlify
 from os import urandom
 
-class LamportSignature:
+
+class LamportOTS:
     def __init__(self):
         self.generateKeys()
         self.used = False
-    
+
     def generateKeys(self):
-        self.zeroPrivateKey = [LamportSignature.randomKey() for i in range(256)]
-        self.onePrivateKey = [LamportSignature.randomKey() for i in range(256)]
-        self.zeroPublicKey = [LamportSignature.sha256(b) for b in self.zeroPrivateKey]
-        self.onePublicKey = [LamportSignature.sha256(b) for b in self.onePrivateKey]
+        self.zeroPrivateKey = [LamportOTS.randomKey() for i in range(256)]
+        self.onePrivateKey = [LamportOTS.randomKey() for i in range(256)]
+        self.zeroPublicKey = [LamportOTS.sha256(
+            b) for b in self.zeroPrivateKey]
+        self.onePublicKey = [LamportOTS.sha256(b) for b in self.onePrivateKey]
 
     def sign(self, msg):
-        if(self.used): print("Key has already been used")
-        else: self.used = True
-        binaryHashedMsg = LamportSignature.hashMessageToBinary(msg)
+        if(self.used):
+            print("Key has already been used")
+        else:
+            self.used = True
+        binaryHashedMsg = LamportOTS.hashMessageToBinary(msg)
         signature = []
         print('Signing message for "'+msg+'"')
         for i in range(len(binaryHashedMsg)):
@@ -25,10 +29,11 @@ class LamportSignature:
         return signature
 
     def verify(self, msg, signature):
-        binaryHashedMsg = LamportSignature.hashMessageToBinary(msg)
+        binaryHashedMsg = LamportOTS.hashMessageToBinary(msg)
         for i in range(len(binaryHashedMsg)):
             bit = binaryHashedMsg[i]
-            if(LamportSignature.sha256(signature[i]) != self.publicKey[bit][i]): return False
+            if(LamportOTS.sha256(signature[i]) != self.publicKey[bit][i]):
+                return False
         return True
 
     @property
@@ -38,15 +43,16 @@ class LamportSignature:
     @property
     def publicKey(self):
         return [self.zeroPublicKey, self.onePublicKey]
-    
+
     @staticmethod
     def concatenateListToString(valueList):
         if type(valueList) is list:
             result = ''
             for value in valueList:
-                result += LamportSignature.concatenateListToString(value)
+                result += LamportOTS.concatenateListToString(value)
                 return result
-        else: return valueList
+        else:
+            return valueList
 
     @staticmethod
     def randomKey(n=32):
@@ -62,18 +68,18 @@ class LamportSignature:
 
     @staticmethod
     def hexToBinary(hashedBytes):
-        binaryMsg= []
+        binaryMsg = []
         for byte in hashedBytes:
-                i = 128
-                while(i > 0):
-                    if byte & i != 0:
-                        binaryMsg.append(1)
-                    else:
-                        binaryMsg.append(0)
-                    i = int(i/2)
+            i = 128
+            while(i > 0):
+                if byte & i != 0:
+                    binaryMsg.append(1)
+                else:
+                    binaryMsg.append(0)
+                i = int(i/2)
         return binaryMsg
 
     @staticmethod
     def hashMessageToBinary(msg):
-        hashedBytesMsg = LamportSignature.sha256Bytes(msg)
-        return LamportSignature.hexToBinary(hashedBytesMsg)
+        hashedBytesMsg = LamportOTS.sha256Bytes(msg)
+        return LamportOTS.hexToBinary(hashedBytesMsg)

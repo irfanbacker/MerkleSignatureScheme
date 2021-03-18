@@ -3,7 +3,7 @@ from binascii import hexlify, unhexlify
 from os import urandom
 
 
-class WinternitzSignature:
+class WinternitzOTS:
     def __init__(self):
         self.generateKeys()
         self.used = False
@@ -13,7 +13,7 @@ class WinternitzSignature:
         pubKey = []
 
         for i in range(32):
-            h = WinternitzSignature.randomKey()
+            h = WinternitzOTS.randomKey()
             privKey.append(h)
             for j in range(256):
                 h = self.sha256(h)
@@ -27,7 +27,7 @@ class WinternitzSignature:
             print("Key has already been used")
         else:
             self.used = True
-        hashedMsg = WinternitzSignature.sha256Bytes(msg)
+        hashedMsg = WinternitzOTS.sha256Bytes(msg)
         signature = []
         print('Signing message for "'+msg+'"')
         for i in range(len(hashedMsg)):
@@ -38,7 +38,7 @@ class WinternitzSignature:
         return signature
 
     def verify(self, msg, signature):
-        hashedMsg = WinternitzSignature.sha256Bytes(msg)
+        hashedMsg = WinternitzOTS.sha256Bytes(msg)
         msgPubKey = []
         for i in range(len(hashedMsg)):
             key = signature[i]
@@ -55,7 +55,7 @@ class WinternitzSignature:
         if type(valueList) is list:
             result = ''
             for value in valueList:
-                result += WinternitzSignature.concatenateListToString(value)
+                result += WinternitzOTS.concatenateListToString(value)
                 return result
         else:
             return valueList

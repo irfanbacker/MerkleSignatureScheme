@@ -2,8 +2,7 @@ import winternitz
 import merkle
 
 totalCountofOTSkeys = 4
-keyPairs = [winternitz.WinternitzSignature()
-            for i in range(totalCountofOTSkeys)]
+keyPairs = [winternitz.WinternitzOTS() for i in range(totalCountofOTSkeys)]
 
 senderMerkleTree = merkle.MSS(leavesCount=totalCountofOTSkeys)
 for i in range(totalCountofOTSkeys):

@@ -1,7 +1,7 @@
 import lamport
 
 senderMessage = 'testing123'
-lamportKeys = lamport.LamportSignature()
+lamportKeys = lamport.LamportOTS()
 messageSignature = lamportKeys.sign(senderMessage)
 
 ###########################################################################################################
