@@ -1,10 +1,11 @@
-import lamport
+import winternitz
 import merkle
 
 totalCountofOTSkeys = 4
-keyPairs = [lamport.LamportSignature() for i in range(totalCountofOTSkeys)]
+keyPairs = [winternitz.WinternitzSignature()
+            for i in range(totalCountofOTSkeys)]
 
-senderMerkleTree = merkle.MerkleTree(leavesCount=totalCountofOTSkeys)
+senderMerkleTree = merkle.MSS(leavesCount=totalCountofOTSkeys)
 for i in range(totalCountofOTSkeys):
     senderMerkleTree.addNode((0, i), keyPairs[i].publicKey, isHashed=False)
 senderMerkleTree.buildTree()
@@ -35,7 +36,7 @@ result = keyPairs[currentOTSkeyIndex].verify(
     recievedMessage, recievedMerkleSignature[0])
 print("Message verification result: " + str(result))
 if result:
-    recieverMerkleTree = merkle.MerkleTree(leavesCount=totalCountofOTSkeys)
+    recieverMerkleTree = merkle.MSS(leavesCount=totalCountofOTSkeys)
     recieverMerkleTree.addNode(
         (0, currentOTSkeyIndex), recievedMerkleSignature[0], isHashed=False)
     recieverMerkleTree.buildTree()
@@ -55,7 +56,7 @@ result = keyPairs[currentOTSkeyIndex].verify(
     recievedMessage, recievedMerkleSignature[0])
 print("Message verification result: " + str(result))
 if result:
-    recieverMerkleTree = merkle.MerkleTree(leavesCount=totalCountofOTSkeys)
+    recieverMerkleTree = merkle.MSS(leavesCount=totalCountofOTSkeys)
     result = recieverMerkleTree.verify(currentOTSkeyIndex=currentOTSkeyIndex,
                                        recievedMerkleSignature=recievedMerkleSignature, recievedRootPublicKey=recievedRootPublicKey)
     print("Merkle signature verification: " + str(result))

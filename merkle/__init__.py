@@ -4,7 +4,7 @@ from os import urandom
 from math import floor, log2
 
 
-class MerkleTree:
+class MSS:
     def __init__(self, leavesCount=4):
         self.leavesCount = leavesCount
         self.levelsCount = None
@@ -18,7 +18,7 @@ class MerkleTree:
                     leftChild = self.tree[(level-1, 2*position)]
                     rightChild = self.tree[(level-1, 2*position+1)]
                     if leftChild != None and rightChild != None:
-                        self.tree[(level, position)] = MerkleTree.sha256(
+                        self.tree[(level, position)] = MSS.sha256(
                             leftChild+rightChild)
                     elif (level, position) not in self.tree:
                         self.tree[(level, position)] = None
@@ -30,9 +30,9 @@ class MerkleTree:
 
     def addNode(self, position, nodeValue, isHashed=True):
         if type(nodeValue) is list:
-            nodeValue = MerkleTree.concatenateListToString(nodeValue)
+            nodeValue = MSS.concatenateListToString(nodeValue)
         if not isHashed:
-            nodeValue = MerkleTree.sha256(nodeValue)
+            nodeValue = MSS.sha256(nodeValue)
         self.tree[position] = nodeValue
 
     def getAuthNodesPosition(self, keyIndex):
@@ -67,7 +67,7 @@ class MerkleTree:
         if type(valueList) is list:
             result = ''
             for value in valueList:
-                result += MerkleTree.concatenateListToString(value)
+                result += MSS.concatenateListToString(value)
                 return result
         else:
             return valueList
@@ -99,5 +99,5 @@ class MerkleTree:
 
     @staticmethod
     def hashMessageToBinary(msg):
-        hashedBytesMsg = MerkleTree.sha256Bytes(msg)
-        return MerkleTree.hexToBinary(hashedBytesMsg)
+        hashedBytesMsg = MSS.sha256Bytes(msg)
+        return MSS.hexToBinary(hashedBytesMsg)
