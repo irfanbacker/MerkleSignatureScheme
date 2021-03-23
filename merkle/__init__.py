@@ -101,3 +101,85 @@ class MSS:
     def hashMessageToBinary(msg):
         hashedBytesMsg = MSS.sha256Bytes(msg)
         return MSS.hexToBinary(hashedBytesMsg)
+
+# Basic structure for XMSS
+
+
+class XMSS:
+    def __init__(self, leavesCount=4):
+        self.leavesCount = leavesCount
+        self.levelsCount = None
+        self.tree = {}
+
+    def buildTree(self):
+        self.levelsCount = int(log2(self.leavesCount)) + 1
+        # Apply tree build logic here
+
+    def RootPublicKey(self):
+        return self.tree[(self.levelsCount-1, 0)]
+
+    def addNode(self, position, nodeValue, isHashed=True):
+        if type(nodeValue) is list:
+            nodeValue = XMSS.concatenateListToString(nodeValue)
+        if not isHashed:
+            nodeValue = XMSS.sha256(nodeValue)
+        # Apply node addition logic here
+
+    def getAuthNodesPosition(self, keyIndex):
+        authPos = []
+        for level in range(self.levelsCount-1):
+            if keyIndex % 2 == 0:
+                authPos.append((level, keyIndex+1))
+            else:
+                authPos.append((level, keyIndex-1))
+            keyIndex = floor(keyIndex/2)
+        return authPos
+
+    def getAuthNodesValue(self, keyIndex):
+        authPos = self.getAuthNodesPosition(keyIndex)
+        authValues = [self.tree[pos] for pos in authPos]
+        return authValues
+
+    def verify(self, currentOTSkeyIndex, recievedMerkleSignature, recievedRootPublicKey):
+        # Apply verification logic here
+        return self.RootPublicKey() == recievedRootPublicKey
+
+    @staticmethod
+    def concatenateListToString(valueList):
+        if type(valueList) is list:
+            result = ''
+            for value in valueList:
+                result += XMSS.concatenateListToString(value)
+                return result
+        else:
+            return valueList
+
+    @staticmethod
+    def randomKey(n=32):
+        return hexlify(urandom(n)).decode('utf-8')
+
+    @staticmethod
+    def sha256(textValue):
+        return hashlib.sha256(textValue.encode('utf-8')).hexdigest()
+
+    @staticmethod
+    def sha256Bytes(textValue):
+        return hashlib.sha256(textValue.encode('utf-8')).digest()
+
+    @staticmethod
+    def hexToBinary(hashedBytes):
+        binaryMsg = []
+        for byte in hashedBytes:
+            i = 128
+            while(i > 0):
+                if byte & i != 0:
+                    binaryMsg.append(1)
+                else:
+                    binaryMsg.append(0)
+                i = int(i/2)
+        return binaryMsg
+
+    @staticmethod
+    def hashMessageToBinary(msg):
+        hashedBytesMsg = XMSS.sha256Bytes(msg)
+        return XMSS.hexToBinary(hashedBytesMsg)
